@@ -1,19 +1,21 @@
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
-const rows = "20";
-const cols = "30";
-const cellWidth = canvas.width / cols;
-const cellHeight = canvas.height / rows;
-let snake = [{ x: 19, y: 3 }];
+let canvas = document.getElementById("canvas");
+let ctx = canvas.getContext("2d");
+let rows = "20";
+let cols = "30";
+let cellWidth = canvas.width / cols;
+let cellHeight = canvas.height / rows;
+let snake = [{ x: 19, y: 3 } ];
 let food = { x: 5, y: 5 };
 let direction = "LEFT";
 let foodCollected = false;
 
 placeFood();
+
 setInterval(gameLoop, 160);
 document.addEventListener("keydown", keyDown);
 
 draw();
+
 
 function draw() {
   ctx.fillStyle = "black";
@@ -31,19 +33,32 @@ function draw() {
 function placeFood() {
   let randomX = Math.floor(Math.random() * cols);
   let randomY = Math.floor(Math.random() * rows);
-
-  food = { x: randomX, y: randomY };
+      food = { x: randomX, y: randomY };
 }
+
 
 function add(x, y) {
   ctx.fillRect(x * cellWidth, y * cellHeight, cellWidth - 1, cellHeight - 1);
 }
 
-function gameLoop() {
-    if (foodCollected) {
-        snake = [{x: snake[0].x, y: snake[0].y}, ...snake];
-        foodCollected = false;
+
+function shiftSnake() {
+    for (let i = snake.length - 1; i > 0; i--) {
+        const part = snake[i];
+        const lastPart = snake[i - 1];
+        part.x = lastPart.x;
+        part.y = lastPart.y;
     }
+}
+
+function gameLoop() {
+  if (foodCollected) {
+    snake = [{ x: snake[0].x, y: snake[0].y }, ...snake];
+    foodCollected = false;
+  }
+  
+  shiftSnake();
+
   if (direction == "LEFT") snake[0].x--;
   if (direction == "UP") snake[0].y--;
   if (direction == "RIGHT") snake[0].x++;
@@ -54,6 +69,7 @@ function gameLoop() {
     placeFood();
   }
 }
+
 
 function keyDown(e) {
   if (e.keyCode == 37) {
